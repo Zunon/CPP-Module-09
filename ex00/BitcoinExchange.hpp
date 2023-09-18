@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 14:31:09 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/18 15:33:11 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/18 17:21:45 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <stdexcept>
 # include <sstream>
 
-# define DATABASE "database.csv"
+# define DATABASE "data.csv"
 
 class BitcoinExchange {
     private:

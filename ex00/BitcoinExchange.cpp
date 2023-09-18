@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 14:31:06 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/18 15:38:18 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/18 17:20:30 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 BitcoinExchange::BitcoinExchange(void): _rates(new std::map<std::string, double>) {}
 
 BitcoinExchange::BitcoinExchange(std::string filename) {
-	std::ifstream file(filename);
+	std::ifstream file(filename.c_str());
 	if (!file.is_open())
 		throw std::runtime_error("File not found");
 	_rates = parseCSV(file);
@@ -54,8 +54,9 @@ std::map<std::string, double>	*BitcoinExchange::parseCSV(std::ifstream &file) {
 	std::getline(file, line);
 	while (std::getline(file, line)) {
 		date = line.substr(0, line.find(','));
-		rate = std::stod(line.substr(line.find(',') + 1));
-		rates->insert({date, rate});
+		std::istringstream stringstream(line.substr(line.find(',') + 1));
+		stringstream >> rate;
+		rates->insert(std::pair<std::string, double>(date, rate));
 	}
 	return (rates);
 }
@@ -76,7 +77,7 @@ double	BitcoinExchange::lookup(std::string date) const {
 void	BitcoinExchange::addData(std::string date, double rate) {
 	if (!verifyDate(date))
 		throw std::runtime_error("Invalid date");
-	_rates->insert({date, rate});
+	_rates->insert(std::pair<std::string, double>(date, rate));
 }
 
 bool BitcoinExchange::verifyDate(std::string date) {
