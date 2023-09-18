@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 14:31:09 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/18 15:23:25 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/18 15:33:11 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <stdexcept>
 # include <sstream>
 
+# define DATABASE "database.csv"
+
 class BitcoinExchange {
     private:
 		std::map<std::string, double>			*_rates;
@@ -31,9 +33,9 @@ class BitcoinExchange {
         BitcoinExchange				(const BitcoinExchange &);
         ~BitcoinExchange			(void);
         BitcoinExchange &operator=	(const BitcoinExchange &);
-		double						lookup(std::string);
+		double						lookup(std::string) const;
 		void						addData(std::string, double);
-		bool						verifyDate(std::string);
+		static bool						verifyDate(std::string);
 };
 
 #endif

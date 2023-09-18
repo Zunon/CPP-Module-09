@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 14:31:06 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/18 15:23:28 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/18 15:38:18 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ std::map<std::string, double>	*BitcoinExchange::parseCSV(std::ifstream &file) {
 	return (rates);
 }
 
-double	BitcoinExchange::lookup(std::string date) {
+double	BitcoinExchange::lookup(std::string date) const {
 	if (!verifyDate(date))
 		throw std::runtime_error("Invalid date");
 	if (_rates->find(date) == _rates->end()) {

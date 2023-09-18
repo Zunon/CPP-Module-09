@@ -6,13 +6,62 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 14:30:44 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/18 14:38:40 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/18 15:47:06 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 
-int main(int argc, char *argv[]) {
-    // @TODO
+bool	verify_line(std::string line, std::string &date, double &amount) {
+	if (line.find(',') == std::string::npos)
+		return (false);
+	date = line.substr(0, line.find(','));
+	amount = std::stod(line.substr(line.find(',') + 1));
+	return (true);
+}
+
+void	process_input(std::ifstream &input, const BitcoinExchange &exchange) {
+	std::string line;
+	std::string date;
+	double amount;
+	double rate;
+	
+	std::getline(input, line);
+	while (std::getline(input, line)) {
+		if (!verify_line(line, date, amount)) {
+			std::cout << "Error: invalid input => " << line << std::endl;
+			continue ;
+		}
+		if (amount <= 0)
+			std::cout << "Error: not a positive number." << std::endl;
+		else if (amount >= 1000)
+			std::cout << "Error: too large a number." << std::endl;
+		else {
+			try {
+				rate = exchange.lookup(date);
+				std::cout << date << " => " << amount << "=" << amount * rate << std::endl;
+			} catch (std::runtime_error &error) {
+				std::cout << "Error: " << error.what() << std::endl;
+			}
+		}
+	}
+}
+
+int	main(int argc, char *argv[]) {
+    if (argc == 2) {
+		std::ifstream file(argv[1]);
+		std::ifstream data(DATABASE);
+		if (!file.is_open()) {
+			std::cout << "Input File not found" << std::endl;
+			return (1);
+		}
+		if (!data.is_open()) {
+			std::cout << "Database not found" << std::endl;
+			return (1);
+		}
+		BitcoinExchange exchange(data);
+		process_input(file, exchange);
+	}
+	std::cout << std::endl;
     return (0);
 }
