@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 14:30:44 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/18 17:23:38 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/18 22:13:12 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	main(int argc, char *argv[]) {
 		}
 		BitcoinExchange exchange(data);
 		process_input(file, exchange);
-	}
-	std::cout << std::endl;
+	} else
+		std::cout << std::endl;
     return (0);
 }
