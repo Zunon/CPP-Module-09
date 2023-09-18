@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 17:27:15 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/18 18:16:00 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/18 18:27:57 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <stdexcept>
 # include <stack>
 # include <sstream>
-# define IS_OPERATOR(c) (c == '+' || c == '-' || c == '*' || c == '/' || c == '%')
+# define IS_OPERATOR(c) (c == '+' || c == '-' || c == '*' || c == '/')
 
 typedef enum	e_operator {
 	PLUS = '+',
