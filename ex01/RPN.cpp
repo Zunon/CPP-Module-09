@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 17:27:24 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/18 19:47:19 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/18 20:04:06 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,8 +123,6 @@ int	RPN::compute(void) const {
 	while (expression.length() > 0) {
 		token = expression.substr(0, expression.find_first_of(' '));
 		expression = expression.substr(expression.find_first_of(' ') + 1);
-		if (expression.length() == 0)
-			break;
 		if (token.length() == 0)
 			continue ;
 		if (IS_OPERATOR(token[0])) {
