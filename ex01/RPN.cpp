@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 17:27:24 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/18 20:04:06 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/18 22:05:16 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,11 +118,16 @@ int	RPN::divide(int a, int b) {
 int	RPN::compute(void) const {
 	std::string		expression(_expression);
 	std::string		token;
+	size_t			pos;
 	t_expression	expr;
 	
 	while (expression.length() > 0) {
-		token = expression.substr(0, expression.find_first_of(' '));
-		expression = expression.substr(expression.find_first_of(' ') + 1);
+		pos = expression.find_first_of(' ');
+		token = expression.substr(0, pos);
+		if (pos == std::string::npos)
+			expression = "";
+		else
+			expression = expression.substr(pos + 1);
 		if (token.length() == 0)
 			continue ;
 		if (IS_OPERATOR(token[0])) {
@@ -143,8 +148,6 @@ int	RPN::compute(void) const {
 				throw RPN::InvalidExpressionException("Invalid operand");
 			_memory->push(value);
 		}
-		if (expression.find_first_of(' ') > expression.length() && _memory->size() == 1)
-			break;
 	}
 	if (_memory->size() > 1)
 		throw RPN::InvalidExpressionException("Too many operands");
