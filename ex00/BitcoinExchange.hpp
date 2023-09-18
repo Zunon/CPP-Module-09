@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 14:31:09 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/18 14:58:03 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/18 15:23:25 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <iostream>
 # include <string>
 # include <fstream>
+# include <stdexcept>
+# include <sstream>
 
 class BitcoinExchange {
     private:
@@ -30,6 +32,7 @@ class BitcoinExchange {
         ~BitcoinExchange			(void);
         BitcoinExchange &operator=	(const BitcoinExchange &);
 		double						lookup(std::string);
+		void						addData(std::string, double);
 		bool						verifyDate(std::string);
 };
 
