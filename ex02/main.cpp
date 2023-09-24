@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:22:30 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/24 17:23:21 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/24 23:22:56 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,15 @@ int	main(int argc, char *argv[]) {
 			return (0);
 		}
 		std::cout << "Before: " << *Pmerge << std::endl;
-		Pmerge->sort();
+		std::clock_t startVec = std::clock();
+		Pmerge->sortVec();
+		std::clock_t endVec = std::clock();
 		std::cout << "After: " << *Pmerge << std::endl;
-		
+		std::clock_t startDeq = std::clock();
+		Pmerge->sortDeq();
+		std::clock_t endDeq = std::clock();
+		std::cout << "Time to process a range of " << Pmerge->getVector()->size() << " elements with std::vector : " << (endVec - startVec) << " clock cycles" << std::endl;
+		std::cout << "Time to process a range of " << Pmerge->getDeque()->size() << " elements with std::deque : " << (endDeq - startDeq) << " clock cycles" << std::endl;
 	} else
 		std::cout << std::endl;
 	return (0);

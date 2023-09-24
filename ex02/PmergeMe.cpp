@@ -6,101 +6,211 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:23:17 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/24 17:31:49 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/24 23:33:48 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 
-PmergeMe::PmergeMe(void): _numbers(new std::vector<int>) {}
+PmergeMe::PmergeMe(void): _vec(new std::vector<int>), _deq(new std::deque<int>) {}
 
 PmergeMe::PmergeMe(const PmergeMe &other) {
 	if (this != &other) {
-		delete _numbers;
-		_numbers = new std::vector<int>;
-		*_numbers = *other._numbers;
+		delete _vec;
+		_vec = new std::vector<int>;
+		*_vec = *other._vec;
+		delete _deq;
+		_deq = new std::deque<int>;
+		*_deq = *other._deq;
 	}
 }
 
 PmergeMe::~PmergeMe(void) {
-	delete _numbers;
+	delete _vec;
+	delete _deq;
 }
 
 PmergeMe	&PmergeMe::operator=(const PmergeMe &other) {
 	if (this != &other) {
-		delete _numbers;
-		_numbers = new std::vector<int>;
-		*_numbers = *other._numbers;
+		delete _vec;
+		_vec = new std::vector<int>;
+		*_vec = *other._vec;
+		delete _deq;
+		_deq = new std::deque<int>;
+		*_deq = *other._deq;
 	}
 	return (*this);
 }
 
 void	PmergeMe::addNumber(int n) {
-	_numbers->push_back(n);
+	_vec->push_back(n);
+	_deq->push_back(n);
 }
 
-void	PmergeMe::sort(void) {
-	sort(*_numbers);
+void	PmergeMe::sortDeq(void) {
+	sortDeq(*_deq);
+}
+
+std::deque<int>	PmergeMe::binarySearchInsertionDeq(std::deque<int> &sortedList, int number) {
+	std::deque<int>::iterator iter = std::lower_bound(sortedList.begin(), sortedList.end(), number);
+	sortedList.insert(iter, number);
+	return (sortedList);
+}
+
+std::deque< std::deque<int> > PmergeMe::sortList2DDeq(const std::deque< std::deque<int> > &list2D) {
+	if (list2D.size() <= 1)
+		return (list2D);
+	
+	size_t middle = list2D.size() / 2;
+	std::deque< std::deque<int> > left(list2D.begin(), list2D.begin() + middle);
+	std::deque< std::deque<int> > right(list2D.begin() + middle, list2D.end());
+
+	left = sortList2DDeq(left);
+	right = sortList2DDeq(right);
+
+	std::deque< std::deque<int> > result;
+	std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(result));
+
+	return (result);
 }
 
 // Ford-Johnson algorithm / Merge Insertion Sort
-void	PmergeMe::sort(std::vector<int>& X) {
-	if (X.size() <= 1) return; // Base case for recursion.
+ void	PmergeMe::sortDeq(std::deque<int> &numbers) {
+	if (numbers.size() <= 1)
+		return ;
+	
+	std::deque< std::deque<int> > pairs;
+	bool has_odd = false;
 
-	// 1. Grouping elements and finding the larger of each pair.
-	size_t n = X.size();
-	std::vector<int> S, Y;
-	for (size_t i = 0; i + 1 < n; i += 2) {
-		if (X[i] < X[i+1]) {
-			S.push_back(X[i+1]);
-			Y.push_back(X[i]);
-		} else {
-			S.push_back(X[i]);
-			Y.push_back(X[i+1]);
+	for (size_t i = 0; i < numbers.size(); i += 2) {
+		if (i == numbers.size() - 1)
+			has_odd = true;
+		else {
+			std::deque<int> pair(2);
+			pair[0] = std::min(numbers[i], numbers[i + 1]);
+			pair[1] = std::max(numbers[i], numbers[i + 1]);
+			pairs.push_back(pair);
 		}
 	}
-	if (n % 2 == 1) Y.push_back(X[n-1]); // If there's an odd element.
 
-	// 2. Recursively sort the larger elements.
-	sort(S);
+	std::deque< std::deque<int> > sortedPairs = sortList2DDeq(pairs);
 
-	// 3. Insert the element paired with the first and smallest element of S.
-	if (!S.empty()) {
-		S.insert(S.begin(), Y[0]);
-		Y.erase(Y.begin());
+	std::deque<int> result;
+	for (size_t i = 0; i < sortedPairs.size(); i++)
+		result.push_back(sortedPairs[i][0]);
+	result.push_back(sortedPairs.back()[1]);
+
+	if (has_odd) {
+		int pivot = numbers.back();
+		result = binarySearchInsertionDeq(result, pivot);
 	}
 
-	// 4. Determine the insertion ordering for the remaining elements.
-	std::vector<int> order = getOrdering(Y.size());
-	std::vector<int> orderedY(Y.size());
-	for (size_t i = 0; i < order.size(); ++i) {
-		orderedY[i] = Y[order[i]-3];  // offset of 3 because y_3 is the first element.
+	bool isLastOddItemInsertedBeforeThisIndex = false;
+	for (size_t i = 0; i < sortedPairs.size() - 1; ++i) {
+		if (result[i] == numbers[numbers.size() - 1 - i])
+			isLastOddItemInsertedBeforeThisIndex = true;
+		int pivot = sortedPairs[i][1];
+		if (isLastOddItemInsertedBeforeThisIndex) {
+			std::deque<int> portion(result.begin() + i + 2, result.end());
+			std::deque<int> temp = binarySearchInsertionDeq(portion, pivot);
+			result.erase(result.begin() + i + 2, result.end());
+			result.insert(result.end(), temp.begin(), temp.end());
+		} else {
+			std::deque<int> portion(result.begin() + i + 1, result.end());
+			std::deque<int> temp = binarySearchInsertionDeq(portion, pivot);
+			result.erase(result.begin() + i + 1, result.end());
+			result.insert(result.end(), temp.begin(), temp.end());
+		}
 	}
 
-	// 5. Insert using binary search.
-	for (size_t i = 0; i < orderedY.size(); ++i) {
-		int toInsert = orderedY[i];
-		auto pos = std::upper_bound(S.begin(), S.end()-i, toInsert);
-		S.insert(pos, toInsert);
-	}
-
-		X = S; // Copy back the sorted sequence to X.
+	numbers = result;
 }
 
-std::vector<int> PmergeMe::getOrdering(size_t n) {
-	std::vector<int> order;
-	std::vector<int> sizes = {2};
-	for (int i = 0; order.size() < n; ++i) {
-		for (int j = 0; j < sizes[i] && order.size() < n; ++j) {
-			order.push_back(2 * i + 5 - j);  // Generate the sequence.
+std::vector<int>	PmergeMe::binarySearchInsertionVec(std::vector<int> &sortedList, int number) {
+	std::vector<int>::iterator iter = std::lower_bound(sortedList.begin(), sortedList.end(), number);
+	sortedList.insert(iter, number);
+	return (sortedList);
+}
+
+std::vector< std::vector<int> > PmergeMe::sortList2DVec(const std::vector< std::vector<int> > &list2D) {
+	if (list2D.size() <= 1)
+		return (list2D);
+	
+	size_t middle = list2D.size() / 2;
+	std::vector< std::vector<int> > left(list2D.begin(), list2D.begin() + middle);
+	std::vector< std::vector<int> > right(list2D.begin() + middle, list2D.end());
+
+	left = sortList2DVec(left);
+	right = sortList2DVec(right);
+
+	std::vector< std::vector<int> > result;
+	std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(result));
+
+	return (result);
+}
+
+void	PmergeMe::sortVec(void) {
+	sortVec(*_vec);
+}
+
+// Ford-Johnson algorithm / Merge Insertion Sort
+ void	PmergeMe::sortVec(std::vector<int> &numbers) {
+	if (numbers.size() <= 1)
+		return ;
+	
+	std::vector< std::vector<int> > pairs;
+	bool has_odd = false;
+
+	for (size_t i = 0; i < numbers.size(); i += 2) {
+		if (i == numbers.size() - 1)
+			has_odd = true;
+		else {
+			std::vector<int> pair(2);
+			pair[0] = std::min(numbers[i], numbers[i + 1]);
+			pair[1] = std::max(numbers[i], numbers[i + 1]);
+			pairs.push_back(pair);
 		}
-		if (i % 2 == 1) sizes.push_back(2 * sizes[i] + 2); // Generate sizes: 2, 6, 22,...
 	}
-	return order;
+
+	std::vector< std::vector<int> > sortedPairs = sortList2DVec(pairs);
+
+	std::vector<int> result;
+	for (size_t i = 0; i < sortedPairs.size(); i++)
+		result.push_back(sortedPairs[i][0]);
+	result.push_back(sortedPairs.back()[1]);
+
+	if (has_odd) {
+		int pivot = numbers.back();
+		result = binarySearchInsertionVec(result, pivot);
+	}
+
+	bool isLastOddItemInsertedBeforeThisIndex = false;
+	for (size_t i = 0; i < sortedPairs.size() - 1; ++i) {
+		if (result[i] == numbers[numbers.size() - 1 - i])
+			isLastOddItemInsertedBeforeThisIndex = true;
+		int pivot = sortedPairs[i][1];
+		if (isLastOddItemInsertedBeforeThisIndex) {
+			std::vector<int> portion(result.begin() + i + 2, result.end());
+			std::vector<int> temp = binarySearchInsertionVec(portion, pivot);
+			result.erase(result.begin() + i + 2, result.end());
+			result.insert(result.end(), temp.begin(), temp.end());
+		} else {
+			std::vector<int> portion(result.begin() + i + 1, result.end());
+			std::vector<int> temp = binarySearchInsertionVec(portion, pivot);
+			result.erase(result.begin() + i + 1, result.end());
+			result.insert(result.end(), temp.begin(), temp.end());
+		}
+	}
+
+	numbers = result;
 }
 
 std::vector<int>	*PmergeMe::getVector(void) const {
-	return (_numbers);
+	return (_vec);
+}
+
+std::deque<int>	*PmergeMe::getDeque(void) const {
+	return (_deq);
 }
 
 std::ostream	&operator<<(std::ostream &o, PmergeMe const &rhs) {
