@@ -6,7 +6,7 @@
 /*   By: kalmheir <kalmheir@student.42abudhabi.a    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 10:22:30 by kalmheir          #+#    #+#             */
-/*   Updated: 2023/09/24 23:22:56 by kalmheir         ###   ########.fr       */
+/*   Updated: 2023/09/25 12:34:48 by kalmheir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,10 @@ PmergeMe	*process_input(int argc, char *argv[]) {
 	int holder = 0;
 	for (int i = 1; i < argc; i++) {
 		stream.str(argv[i]);
-		if (!(stream >> holder))
+		if (!(stream >> holder)) {
+			delete Pmerge;
 			return (NULL);
+		}
 		Pmerge->addNumber(holder);
 		stream.clear();
 	}
@@ -28,7 +30,7 @@ PmergeMe	*process_input(int argc, char *argv[]) {
 }
 
 int	main(int argc, char *argv[]) {
-	PmergeMe *Pmerge;
+	PmergeMe *Pmerge = 0;
 	if (argc > 1) {
 		Pmerge = process_input(argc, argv);
 		if (!Pmerge) {
@@ -47,5 +49,7 @@ int	main(int argc, char *argv[]) {
 		std::cout << "Time to process a range of " << Pmerge->getDeque()->size() << " elements with std::deque : " << (endDeq - startDeq) << " clock cycles" << std::endl;
 	} else
 		std::cout << std::endl;
+	if (Pmerge)
+		delete Pmerge;
 	return (0);
 }
